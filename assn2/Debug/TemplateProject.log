@@ -1,0 +1,26 @@
+﻿Build started 10/28/2016 1:18:50 AM.
+     1>Project "C:\Users\ben72\OneDrive\NYU\Fall 16\CS-GY 6533\CS6533-FA16\assn2\TemplateProject.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\" /Fd"Debug\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt glsupport.cpp main.cpp VertexPN.cpp
+         VertexPN.cpp
+         main.cpp
+     1>c:\users\ben72\onedrive\nyu\fall 16\cs-gy 6533\cs6533-fa16\assn2\main.cpp(83): warning C4305: 'argument': truncation from 'double' to 'float'
+     1>c:\users\ben72\onedrive\nyu\fall 16\cs-gy 6533\cs6533-fa16\assn2\geometrymaker.h(60): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+         c:\users\ben72\onedrive\nyu\fall 16\cs-gy 6533\cs6533-fa16\assn2\main.cpp(144): note: see reference to function template instantiation 'void makeCube<std::_Vector_iterator<std::_Vector_val<std::_Simple_types<VertexPN>>>,std::_Vector_iterator<std::_Vector_val<std::_Simple_types<unsigned short>>>>(float,VtxOutIter,IdxOutIter)' being compiled
+                 with
+                 [
+                     VtxOutIter=std::_Vector_iterator<std::_Vector_val<std::_Simple_types<VertexPN>>>,
+                     IdxOutIter=std::_Vector_iterator<std::_Vector_val<std::_Simple_types<unsigned short>>>
+                 ]
+         glsupport.cpp
+         Generating Code...
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\ben72\OneDrive\NYU\Fall 16\CS-GY 6533\CS6533-FA16\assn2\Debug\TemplateProject.exe" /INCREMENTAL /NOLOGO freeglut.lib glew32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"C:\Users\ben72\OneDrive\NYU\Fall 16\CS-GY 6533\CS6533-FA16\assn2\Debug\TemplateProject.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\ben72\OneDrive\NYU\Fall 16\CS-GY 6533\CS6533-FA16\assn2\Debug\TemplateProject.lib" /MACHINE:X86 Debug\glsupport.obj
+         Debug\main.obj
+         Debug\VertexPN.obj
+         TemplateProject.vcxproj -> C:\Users\ben72\OneDrive\NYU\Fall 16\CS-GY 6533\CS6533-FA16\assn2\Debug\TemplateProject.exe
+     1>Done Building Project "C:\Users\ben72\OneDrive\NYU\Fall 16\CS-GY 6533\CS6533-FA16\assn2\TemplateProject.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:02.81
