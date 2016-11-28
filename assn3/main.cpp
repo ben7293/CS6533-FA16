@@ -36,7 +36,7 @@ GLuint diffuseTexture;
 GLuint specularTexture;
 GLuint normalTexture;
 
-//GLuint timeUniform;
+GLuint timeUniform;
 GLuint positionUniform;
 GLuint modelviewMatrixUniformLocation;
 GLuint projectionMatrixUniformLocation;
@@ -153,9 +153,17 @@ void display(void) {
 	int timeSinceStart = glutGet(GLUT_ELAPSED_TIME) / 1000.0f;
 
 	Matrix4 eyeMatrix;
-	eyeMatrix = eyeMatrix.makeTranslation(Cvec3(-0.5, 0.0, 0.0));
+	eyeMatrix = eyeMatrix.makeTranslation(Cvec3(-0.5, 4.0, 10.0));
 	eyeMatrix = eyeMatrix * eyeMatrix.makeXRotation(5.0);
-	
+
+	Matrix4 object1EyeMatrix;
+	object1EyeMatrix = object1EyeMatrix.makeTranslation(Cvec3(5.0, 4.0, 10.0));
+	object1EyeMatrix = object1EyeMatrix * object1EyeMatrix.makeXRotation(5.0);
+
+	Matrix4 object2EyeMatrix;
+	object2EyeMatrix = object2EyeMatrix.makeTranslation(Cvec3(-5.0, 4.0, 10.0));
+	object2EyeMatrix = object2EyeMatrix * object2EyeMatrix.makeXRotation(5.0);
+
 	//Matrix4 modelViewMatrix = inv(eyeMatrix) * objectMatrix;
 		
 	//GLfloat glmatrix[16];
@@ -195,19 +203,20 @@ void display(void) {
 
 	// Projection Matrix
 	Matrix4 projectionMatrix;
-	projectionMatrix = projectionMatrix.makeProjection(45.0, 1.0, -0.1, -100.0);
+	projectionMatrix = projectionMatrix.makeProjection(90.0, 1.0, -0.1, -100.0);
 
 	GLfloat glmatrixProjection[16];
 	projectionMatrix.writeToColumnMajorMatrix(glmatrixProjection);
 	glUniformMatrix4fv(projectionMatrixUniformLocation, 1, false, glmatrixProjection);
 
 	
-	object1.transform.rotation = Quat::makeYRotation(15.0);
-	object1.Draw(inv(eyeMatrix), positionAttribute, texCoordAttribute, normalAttribute, binormalAttribute, tangentAttribute, modelviewMatrixUniformLocation, normalMatrixUniformLocation);
+	object1.transform.rotation = Quat::makeYRotation(-15.0);
+	object1.transform.position = Cvec3(0.0, 0.0, 0.0);
+	object1.Draw(inv(object1EyeMatrix), positionAttribute, texCoordAttribute, normalAttribute, binormalAttribute, tangentAttribute, modelviewMatrixUniformLocation, normalMatrixUniformLocation);
 
 	object2.transform.rotation = Quat::makeYRotation(15.0);
-	//object2.transform.translation = Cvec3(0.0, 0.0, -5.0);
-	object2.Draw(inv(eyeMatrix), positionAttribute, texCoordAttribute, normalAttribute, binormalAttribute, tangentAttribute, modelviewMatrixUniformLocation, normalMatrixUniformLocation);
+	object2.transform.position = Cvec3(1.0, 0.0, 0.0);
+	object2.Draw(inv(object2EyeMatrix), positionAttribute, texCoordAttribute, normalAttribute, binormalAttribute, tangentAttribute, modelviewMatrixUniformLocation, normalMatrixUniformLocation);
 
 
 	glutSwapBuffers();
@@ -217,6 +226,7 @@ void init() {
 
 	program = glCreateProgram();
 
+	glClearDepth(0.0f);
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glEnable(GL_DEPTH_TEST);
@@ -229,7 +239,7 @@ void init() {
 	positionAttribute = glGetAttribLocation(program, "position");
 	texCoordAttribute = glGetAttribLocation(program, "texCoord");
 	//colorAttribute = glGetAttribLocation(program, "color");
-	//timeUniform = glGetUniformLocation(program, "time");
+	timeUniform = glGetUniformLocation(program, "time");
 	normalAttribute = glGetAttribLocation(program, "normal");
 	binormalAttribute = glGetAttribLocation(program, "binormal");
 	tangentAttribute = glGetAttribLocation(program, "tangent");
@@ -237,27 +247,28 @@ void init() {
 	modelviewMatrixUniformLocation = glGetUniformLocation(program, "modelViewMatrix");
 	projectionMatrixUniformLocation = glGetUniformLocation(program, "projectionMatrix");
 	normalMatrixUniformLocation = glGetUniformLocation(program, "normalMatrix");
-	normalTextureUniformLocation = glGetUniformLocation(program, "normalMatrix");
+	normalTextureUniformLocation = glGetUniformLocation(program, "normalTexture");
 	diffuseTextureUniformLocation = glGetUniformLocation(program, "diffuseTexture");
 	specularTextureUniformLocation = glGetUniformLocation(program, "specularTexture");
 
-	loadObjFile("model/Monk_Giveaway.obj", model1MeshVertices, model1MeshIndices);
-	loadObjFile("model/Monk_Giveaway.obj", model2MeshVertices, model2MeshIndices);
+	loadObjFile("model/Monk_Giveaway_Fixed.obj", model1MeshVertices, model1MeshIndices);
+	loadObjFile("model/Monk_Giveaway_Fixed.obj", model2MeshVertices, model2MeshIndices);
 
-	diffuseTexture = loadGLTexture("model/Monk_D.tga");
+	// Monk 1
+	object1.diffuseTexture = loadGLTexture("model/Monk_D.tga");
 	glUniform1i(diffuseTextureUniformLocation, 0);
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, specularTexture);
+	glBindTexture(GL_TEXTURE_2D, object1.diffuseTexture);
 
-	specularTexture = loadGLTexture("model/Monk_S.tga");
-	glUniform1i(diffuseTextureUniformLocation, 1);
+	object1.specularTexture = loadGLTexture("model/Monk_S.tga");
+	glUniform1i(specularTextureUniformLocation, 1);
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, diffuseTexture);
+	glBindTexture(GL_TEXTURE_2D, object1.specularTexture);
 
-	normalTexture = loadGLTexture("model/Monk_N.tga");
-	glUniform1i(diffuseTextureUniformLocation, 2);
+	object1.normalTexture = loadGLTexture("model/Monk_N.tga");
+	glUniform1i(normalTextureUniformLocation, 2);
 	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, normalTexture);
+	glBindTexture(GL_TEXTURE_2D, object1.normalTexture);
 
 	// Monk 1
 	for (int i = 0; i < model1MeshVertices.size(); i += 3) {
@@ -274,6 +285,36 @@ void init() {
 		model1MeshVertices[i + 2].b = binormal;
 	}
 
+	// Monk 1
+	object1.geometry.numIndices = model1MeshIndices.size();
+	object1.geometry.vertexBO = model1MeshVertices.size();
+	object1.geometry.indexBO = model1MeshIndices.size();
+
+	// Monk 1
+	glGenBuffers(1, &object1.geometry.vertexBO);
+	glBindBuffer(GL_ARRAY_BUFFER, object1.geometry.vertexBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(VertexPNTBTG) * model1MeshVertices.size(), model1MeshVertices.data(), GL_STATIC_DRAW);
+
+	glGenBuffers(1, &object1.geometry.indexBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, object1.geometry.indexBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned short) * model1MeshIndices.size(), model1MeshIndices.data(), GL_STATIC_DRAW);
+
+	// Monk 2
+	object2.diffuseTexture = loadGLTexture("model/Monk_D.tga");
+	glUniform1i(diffuseTextureUniformLocation, 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, object2.diffuseTexture);
+
+	object2.specularTexture = loadGLTexture("model/Monk_S.tga");
+	glUniform1i(specularTextureUniformLocation, 1);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, object2.specularTexture);
+
+	object2.normalTexture = loadGLTexture("model/Monk_N.tga");
+	glUniform1i(normalTextureUniformLocation, 2);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, object2.normalTexture);
+
 	// Monk 2
 	for (int i = 0; i < model2MeshVertices.size(); i += 3) {
 		Cvec3f tangent;
@@ -289,14 +330,10 @@ void init() {
 		model2MeshVertices[i + 2].b = binormal;
 	}
 
-	// Monk 1
-	glGenBuffers(1, &object1.geometry.vertexBO);
-	glBindBuffer(GL_ARRAY_BUFFER, object1.geometry.vertexBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(VertexPNTBTG) * model1MeshVertices.size(), model1MeshVertices.data(), GL_STATIC_DRAW);
-
-	glGenBuffers(1, &object1.geometry.indexBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, object1.geometry.indexBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned short) * model1MeshIndices.size(), model1MeshIndices.data(), GL_STATIC_DRAW);
+	// Monk 2
+	object2.geometry.numIndices = model2MeshIndices.size();
+	object2.geometry.vertexBO = model2MeshVertices.size();
+	object2.geometry.indexBO = model2MeshIndices.size();
 
 	// Monk 2
 	glGenBuffers(2, &object2.geometry.vertexBO);
@@ -307,14 +344,6 @@ void init() {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, object2.geometry.indexBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned short) * model2MeshIndices.size(), model2MeshIndices.data(), GL_STATIC_DRAW);
 
-	object1.geometry.numIndices = model1MeshIndices.size();
-	object1.geometry.vertexBO = model1MeshVertices.size();
-	object1.geometry.indexBO = model1MeshIndices.size();
-
-	object2.geometry.numIndices = model2MeshIndices.size();
-	object2.geometry.vertexBO = model2MeshVertices.size();
-	object2.geometry.indexBO = model2MeshIndices.size();
-
 	// Lighting
 	light1PositionUniformLocation = glGetUniformLocation(program, "lights[0].lightPosition");
 	light1DirectionUniformLocation = glGetUniformLocation(program, "lights[0].lightDirection"); //?
@@ -322,16 +351,14 @@ void init() {
 	light1SpecularColorUniformLocation = glGetUniformLocation(program, "lights[0].specularLightColor");
 
 	light2PositionUniformLocation = glGetUniformLocation(program, "lights[1].lightPosition");
-	light2DirectionUniformLocation = glGetUniformLocation(program, "lights[0].lightDirection"); //?
+	light2DirectionUniformLocation = glGetUniformLocation(program, "lights[1].lightDirection"); //?
 	light2ColorUniformLocation = glGetUniformLocation(program, "lights[1].lightColor");
 	light2SpecularColorUniformLocation = glGetUniformLocation(program, "lights[1].specularLightColor");
 
 	light3PositionUniformLocation = glGetUniformLocation(program, "lights[2].lightPosition");
-	light3DirectionUniformLocation = glGetUniformLocation(program, "lights[0].lightDirection"); //?
+	light3DirectionUniformLocation = glGetUniformLocation(program, "lights[2].lightDirection"); //?
 	light3ColorUniformLocation = glGetUniformLocation(program, "lights[2].lightColor");
 	light3SpecularColorUniformLocation = glGetUniformLocation(program, "lights[2].specularLightColor");
-
-
 
 }
 
@@ -355,9 +382,9 @@ int main(int argc, char **argv) {
     glutReshapeFunc(reshape);
     glutIdleFunc(idle);
 
-	glutKeyboardFunc(keyboard);
-	glutMouseFunc(mouse);
-	glutMotionFunc(mouseMove);
+	//glutKeyboardFunc(keyboard);
+	//glutMouseFunc(mouse);
+	//glutMotionFunc(mouseMove);
     
     init();
     glutMainLoop();

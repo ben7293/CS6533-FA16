@@ -19,8 +19,9 @@ float attenuate(float dist, float a, float b) {
 }
 
 void main() {
-	vec3 diffuseColor = vec3(0.0, 0.0, 0.0);
-	vec3 specularColor = vec3(0.0, 0.0, 0.0);
+	vec3 diffuseColor = vec3(1.0, 1.0, 1.0);
+	vec3 specularColor = vec3(1.0, 0.5, 0.0);
+	vec3 normalColor = vec3(0.9, 1.0, 0.6);
 
 	vec3 textureNormal = normalize((texture2D(normalTexture, varyingTexCoord).xyz * 2.0) -1.0);
 	textureNormal = normalize(varyingTBNMatrix * textureNormal);
@@ -37,6 +38,6 @@ void main() {
 		specularColor += lights[i].specularLightColor * specular * attenuation;
 	}
 
-	vec3 intensity = (texture2D(diffuseTexture, varyingTexCoord).xyz * diffuseColor) + (specularColor * texture2D(specularTexture, varyingTexCoord).x);
+	vec3 intensity = (texture2D(diffuseTexture, varyingTexCoord).xyz * diffuseColor) + (specularColor * texture2D(specularTexture, varyingTexCoord).x) + (normalColor * texture2D(normalTexture, varyingTexCoord).x);
 	gl_FragColor = vec4(intensity.xyz, 1.0);
 }

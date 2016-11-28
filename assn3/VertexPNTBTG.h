@@ -70,7 +70,10 @@ struct Geometry {
 struct Entity {
 	Transform transform;
 	Geometry geometry;
-	Entity* parent;
+	Entity* parent = nullptr;
+	GLuint diffuseTexture;
+	GLuint specularTexture;
+	GLuint normalTexture;
 
 	void Draw(Matrix4 &eyeInverse, GLuint positionAttribute, GLuint texCoordAttribute, GLuint normalAttribute, GLuint binormalAttribute, GLuint tangentAttribute, GLuint modelviewMatrixUniformLocation, GLuint normalMatrixUniformLocation) {
 
@@ -80,7 +83,7 @@ struct Entity {
 			modelViewMatrix = eyeInverse * transform.createMatrix();
 		}
 		else {
-			Matrix4 modelViewMatrix = eyeInverse;
+			Matrix4 modelViewMatrix = eyeInverse * parent->transform.createMatrix();
 		}
 		GLfloat glmatrix[16];
 		modelViewMatrix.writeToColumnMajorMatrix(glmatrix);
