@@ -11,16 +11,12 @@ Benson Tsai
 */
 
 
-
-
-
-
-
 #include "glsupport.h"
 #include <GL/freeglut.h>
 #include "tiny_obj_loader.h"
 #include "quat.h"
 #include "matrix4.h"
+#include "cvec.h"
 #include "VertexPNTBTG.h"
 
 GLuint program;
@@ -45,9 +41,11 @@ GLuint positionUniform;
 GLuint modelviewMatrixUniformLocation;
 GLuint projectionMatrixUniformLocation;
 GLuint normalMatrixUniformLocation;
+
 GLuint normalTextureUniformLocation;
 GLuint diffuseTextureUniformLocation;
 GLuint specularTextureUniformLocation;
+
 GLuint light1PositionUniformLocation;
 GLuint light2PositionUniformLocation;
 GLuint light3PositionUniformLocation;
@@ -153,10 +151,6 @@ void display(void) {
 	//glUseProgram(program);
 
 	int timeSinceStart = glutGet(GLUT_ELAPSED_TIME) / 1000.0f;
-	//glUniform1f(timeUniform, textureOffset);
-
-	//Matrix4 objectMatrix;
-	//objectMatrix = objectMatrix.makeZRotation(45.0);
 
 	Matrix4 eyeMatrix;
 	eyeMatrix = eyeMatrix.makeTranslation(Cvec3(-0.5, 0.0, 0.0));
@@ -168,26 +162,33 @@ void display(void) {
 	//modelViewMatrix.writeToColumnMajorMatrix(glmatrix);
 	//glUniformMatrix4fv(modelviewMatrixUniformLocation, 1, false, glmatrix);
 
-	//Cvec4 lightPosition0 = Cvec4(0.0, 10.0, 2.0, 1.0);
-	//lightPosition0 = inv(eyeMatrix) * lightPosition0;
-
-	glUniform3f(light1PositionUniformLocation, 5.0, 1.0, 0.0);
+	////////
+	Cvec4 lightPosition0 = Cvec4(0.0, 5.0, 1.0, 0.0);
+	lightPosition0 = inv(eyeMatrix) * lightPosition0;
+	////////
+	
+	//glUniform3f(light1PositionUniformLocation, 5.0, 1.0, 0.0);
+	glUniform3f(light1PositionUniformLocation, lightPosition0[0], lightPosition0[1], lightPosition0[2]);
 	glUniform3f(light1ColorUniformLocation, 1.0, 0.0, 0.0);
 	glUniform3f(light1SpecularColorUniformLocation, 1.0, 1.0, 1.0);
 
+	////////
+	Cvec4 lightPosition1 = Cvec4(5.0, 15.0, 3.0, 1.0);
+	lightPosition1 = inv(eyeMatrix) * lightPosition1;
+	////////
 
-	//Cvec4 lightPosition1 = Cvec4(5.0, 15.0, 3.0, 1.0);
-	//lightPosition1 = inv(eyeMatrix) * lightPosition1;
-
-	glUniform3f(light2PositionUniformLocation, 5.0, 1.0, 0.0);
+	//glUniform3f(light2PositionUniformLocation, 5.0, 1.0, 0.0);
+	glUniform3f(light2PositionUniformLocation, lightPosition1[0], lightPosition1[1], lightPosition1[2]);
 	glUniform3f(light2ColorUniformLocation, 0.0, 1.0, 0.0);
 	glUniform3f(light2SpecularColorUniformLocation, 1.0, 1.0, 1.0);
 
+	////////
+	Cvec4 lightPosition2 = Cvec4(-5.0, 13.0, -1.0, 1.0);
+	lightPosition2 = inv(eyeMatrix) * lightPosition2;
+	////////
 
-	//Cvec4 lightPosition2 = Cvec4(-5.0, 13.0, -1.0, 1.0);
-	//lightPosition2 = inv(eyeMatrix) * lightPosition2;
-
-	glUniform3f(light3PositionUniformLocation, 5.0, 1.0, 0.0);
+	//glUniform3f(light3PositionUniformLocation, 5.0, 1.0, 0.0);
+	glUniform3f(light3PositionUniformLocation, lightPosition2[0], lightPosition2[1], lightPosition2[2]);
 	glUniform3f(light3ColorUniformLocation, 0.0, 0.0, 1.0);
 	glUniform3f(light3SpecularColorUniformLocation, 1.0, 1.0, 1.0);
 
@@ -201,10 +202,10 @@ void display(void) {
 	glUniformMatrix4fv(projectionMatrixUniformLocation, 1, false, glmatrixProjection);
 
 	
-	object1.transform.rotationY = Quat::makeYRotation(15.0);
+	object1.transform.rotation = Quat::makeYRotation(15.0);
 	object1.Draw(inv(eyeMatrix), positionAttribute, texCoordAttribute, normalAttribute, binormalAttribute, tangentAttribute, modelviewMatrixUniformLocation, normalMatrixUniformLocation);
 
-	object2.transform.rotationY = Quat::makeYRotation(180.0);
+	object2.transform.rotation = Quat::makeYRotation(15.0);
 	//object2.transform.translation = Cvec3(0.0, 0.0, -5.0);
 	object2.Draw(inv(eyeMatrix), positionAttribute, texCoordAttribute, normalAttribute, binormalAttribute, tangentAttribute, modelviewMatrixUniformLocation, normalMatrixUniformLocation);
 
@@ -262,11 +263,12 @@ void init() {
 	for (int i = 0; i < model1MeshVertices.size(); i += 3) {
 		Cvec3f tangent;
 		Cvec3f binormal;
-		calculateFaceTangent(model1MeshVertices[i].p, model1MeshVertices[i + 1].p, model1MeshVertices[i + 2].p,
-			model1MeshVertices[i].t, model1MeshVertices[i + 1].t, model1MeshVertices[i + 2].t, tangent, binormal);
+		calculateFaceTangent(model1MeshVertices[i].p, model1MeshVertices[i + 1].p, model1MeshVertices[i + 2].p, model1MeshVertices[i].t, model1MeshVertices[i + 1].t, model1MeshVertices[i + 2].t, tangent, binormal);
+		
 		model1MeshVertices[i].tg = tangent;
 		model1MeshVertices[i + 1].tg = tangent;
 		model1MeshVertices[i + 2].tg = tangent;
+
 		model1MeshVertices[i].b = binormal;
 		model1MeshVertices[i + 1].b = binormal;
 		model1MeshVertices[i + 2].b = binormal;
@@ -276,11 +278,12 @@ void init() {
 	for (int i = 0; i < model2MeshVertices.size(); i += 3) {
 		Cvec3f tangent;
 		Cvec3f binormal;
-		calculateFaceTangent(model2MeshVertices[i].p, model2MeshVertices[i + 1].p, model2MeshVertices[i + 2].p,
-			model2MeshVertices[i].t, model2MeshVertices[i + 1].t, model2MeshVertices[i + 2].t, tangent, binormal);
+		calculateFaceTangent(model2MeshVertices[i].p, model2MeshVertices[i + 1].p, model2MeshVertices[i + 2].p,	model2MeshVertices[i].t, model2MeshVertices[i + 1].t, model2MeshVertices[i + 2].t, tangent, binormal);
+		
 		model2MeshVertices[i].tg = tangent;
 		model2MeshVertices[i + 1].tg = tangent;
 		model2MeshVertices[i + 2].tg = tangent;
+
 		model2MeshVertices[i].b = binormal;
 		model2MeshVertices[i + 1].b = binormal;
 		model2MeshVertices[i + 2].b = binormal;

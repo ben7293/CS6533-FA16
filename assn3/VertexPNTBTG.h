@@ -18,29 +18,35 @@ struct VertexPNTBTG {
 };
 
 struct Transform {
-	Quat rotationX, rotationY, rotationZ;
+	Quat rotation;
 	Cvec3 scale;
 	Cvec3 position;
-	Transform() : scale(1.0f, 1.0f, 1.0f) {
+	Transform() : scale(1.0f, 1.0f, 1.0f) {}
+	Matrix4 createMatrix() {
+		Matrix4 matrix;
+		matrix = matrix.makeTranslation(position) * quatToMatrix(rotation) * matrix.makeScale(scale);
+		return matrix;
 	}
-	Matrix4 createMatrix();
 };
+
 struct Geometry {
 	GLuint vertexBO;
 	GLuint indexBO;
 	int numIndices;
 	void Draw(GLuint positionAttribute, GLuint texCoordAttribute, GLuint normalAttribute, GLuint binormalAttribute, GLuint tangentAttribute) {
+		
 		// bind buffer objects and draw
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBO);
 		glVertexAttribPointer(positionAttribute, 3, GL_FLOAT, GL_FALSE, sizeof(VertexPNTBTG), (void*)offsetof(VertexPNTBTG, p));
 		glEnableVertexAttribArray(positionAttribute);
 
 		//glBindBuffer(GL_ARRAY_BUFFER, vertTexCoordVBO);
-		//glVertexAttribPointer(texCoordAttribute, 2, GL_FLOAT, GL_FALSE, 0, 0);
-		//glEnableVertexAttribArray(texCoordAttribute);
-
-		glVertexAttribPointer(normalAttribute, 3, GL_FLOAT, GL_FALSE, sizeof(VertexPNTBTG), (void*)offsetof(VertexPNTBTG, n));
+		
+		glEnableVertexAttribArray(texCoordAttribute);
+		glVertexAttribPointer(texCoordAttribute, 2, GL_FLOAT, GL_FALSE, sizeof(VertexPNTBTG), (void*)offsetof(VertexPNTBTG, t));
+		
 		glEnableVertexAttribArray(normalAttribute);
+		glVertexAttribPointer(normalAttribute, 3, GL_FLOAT, GL_FALSE, sizeof(VertexPNTBTG), (void*)offsetof(VertexPNTBTG, n));
 
 		glEnableVertexAttribArray(binormalAttribute);
 		glVertexAttribPointer(binormalAttribute, 3, GL_FLOAT, GL_FALSE, sizeof(VertexPNTBTG), (void*)offsetof(VertexPNTBTG, b));
@@ -60,23 +66,22 @@ struct Geometry {
 
 	}
 };
+
 struct Entity {
 	Transform transform;
 	Geometry geometry;
-	Entity* child;
 	Entity* parent;
-	void adoption(Entity* theChild) {
-		theChild->parent = this;
-		child = theChild;
-	}
-	void disown(Entity* theChild) {
-		theChild->parent = nullptr;
-		child = nullptr;
-	}
+
 	void Draw(Matrix4 &eyeInverse, GLuint positionAttribute, GLuint texCoordAttribute, GLuint normalAttribute, GLuint binormalAttribute, GLuint tangentAttribute, GLuint modelviewMatrixUniformLocation, GLuint normalMatrixUniformLocation) {
 
 		// create modelview matrix
-		Matrix4 modelViewMatrix = eyeInverse;
+		Matrix4 modelViewMatrix;
+		if (parent == nullptr) {
+			modelViewMatrix = eyeInverse * transform.createMatrix();
+		}
+		else {
+			Matrix4 modelViewMatrix = eyeInverse;
+		}
 		GLfloat glmatrix[16];
 		modelViewMatrix.writeToColumnMajorMatrix(glmatrix);
 		
