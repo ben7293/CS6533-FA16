@@ -1,21 +1,20 @@
-﻿Build started 11/28/2016 8:08:01 PM.
+﻿Build started 11/28/2016 8:20:34 PM.
      1>Project "C:\Users\ben72\OneDrive\NYU\Fall 16\CS-GY 6533\CS6533-FA16\assn3\TemplateProject.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
          main.cpp
-     1>c:\users\ben72\onedrive\nyu\fall 16\cs-gy 6533\cs6533-fa16\assn3\main.cpp(78): warning C4018: '<' : signed/unsigned mismatch
      1>c:\users\ben72\onedrive\nyu\fall 16\cs-gy 6533\cs6533-fa16\assn3\main.cpp(79): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\ben72\onedrive\nyu\fall 16\cs-gy 6533\cs6533-fa16\assn3\main.cpp(91): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
-     1>c:\users\ben72\onedrive\nyu\fall 16\cs-gy 6533\cs6533-fa16\assn3\main.cpp(128): warning C4305: '+=' : truncation from 'double' to 'float'
-     1>c:\users\ben72\onedrive\nyu\fall 16\cs-gy 6533\cs6533-fa16\assn3\main.cpp(131): warning C4305: '-=' : truncation from 'double' to 'float'
-     1>c:\users\ben72\onedrive\nyu\fall 16\cs-gy 6533\cs6533-fa16\assn3\main.cpp(138): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-     1>c:\users\ben72\onedrive\nyu\fall 16\cs-gy 6533\cs6533-fa16\assn3\main.cpp(144): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-     1>c:\users\ben72\onedrive\nyu\fall 16\cs-gy 6533\cs6533-fa16\assn3\main.cpp(153): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
-     1>c:\users\ben72\onedrive\nyu\fall 16\cs-gy 6533\cs6533-fa16\assn3\main.cpp(179): warning C4244: 'argument' : conversion from 'double' to 'GLfloat', possible loss of data
-     1>c:\users\ben72\onedrive\nyu\fall 16\cs-gy 6533\cs6533-fa16\assn3\main.cpp(189): warning C4244: 'argument' : conversion from 'double' to 'GLfloat', possible loss of data
-     1>c:\users\ben72\onedrive\nyu\fall 16\cs-gy 6533\cs6533-fa16\assn3\main.cpp(199): warning C4244: 'argument' : conversion from 'double' to 'GLfloat', possible loss of data
-     1>c:\users\ben72\onedrive\nyu\fall 16\cs-gy 6533\cs6533-fa16\assn3\main.cpp(274): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\ben72\onedrive\nyu\fall 16\cs-gy 6533\cs6533-fa16\assn3\main.cpp(319): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\ben72\onedrive\nyu\fall 16\cs-gy 6533\cs6533-fa16\assn3\main.cpp(80): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\ben72\onedrive\nyu\fall 16\cs-gy 6533\cs6533-fa16\assn3\main.cpp(92): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\ben72\onedrive\nyu\fall 16\cs-gy 6533\cs6533-fa16\assn3\main.cpp(129): warning C4305: '+=' : truncation from 'double' to 'float'
+     1>c:\users\ben72\onedrive\nyu\fall 16\cs-gy 6533\cs6533-fa16\assn3\main.cpp(132): warning C4305: '-=' : truncation from 'double' to 'float'
+     1>c:\users\ben72\onedrive\nyu\fall 16\cs-gy 6533\cs6533-fa16\assn3\main.cpp(139): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\ben72\onedrive\nyu\fall 16\cs-gy 6533\cs6533-fa16\assn3\main.cpp(145): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\ben72\onedrive\nyu\fall 16\cs-gy 6533\cs6533-fa16\assn3\main.cpp(181): warning C4244: 'argument' : conversion from 'double' to 'GLfloat', possible loss of data
+     1>c:\users\ben72\onedrive\nyu\fall 16\cs-gy 6533\cs6533-fa16\assn3\main.cpp(191): warning C4244: 'argument' : conversion from 'double' to 'GLfloat', possible loss of data
+     1>c:\users\ben72\onedrive\nyu\fall 16\cs-gy 6533\cs6533-fa16\assn3\main.cpp(201): warning C4244: 'argument' : conversion from 'double' to 'GLfloat', possible loss of data
+     1>c:\users\ben72\onedrive\nyu\fall 16\cs-gy 6533\cs6533-fa16\assn3\main.cpp(276): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\ben72\onedrive\nyu\fall 16\cs-gy 6533\cs6533-fa16\assn3\main.cpp(321): warning C4018: '<' : signed/unsigned mismatch
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\ben72\OneDrive\NYU\Fall 16\CS-GY 6533\CS6533-FA16\assn3\Debug\TemplateProject.exe" /INCREMENTAL /NOLOGO freeglut.lib glew32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\ben72\OneDrive\NYU\Fall 16\CS-GY 6533\CS6533-FA16\assn3\Debug\TemplateProject.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\ben72\OneDrive\NYU\Fall 16\CS-GY 6533\CS6533-FA16\assn3\Debug\TemplateProject.lib" /MACHINE:X86 Debug\glsupport.obj
          Debug\main.obj
@@ -24,4 +23,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:01.91
+Time Elapsed 00:00:02.19

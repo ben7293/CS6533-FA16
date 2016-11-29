@@ -1,12 +1,13 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 
 /*
-
 Benson Tsai
+CS-GY 6533
+Prof. Ivan Safrin
+Assignment 3
+11/22/2016
 
-
-
-
+This is a program with 3D rendering of two monk models with three lighting sources.
 
 */
 
@@ -150,7 +151,8 @@ void display(void) {
     
 	//glUseProgram(program);
 
-	int timeSinceStart = glutGet(GLUT_ELAPSED_TIME) / 1000.0f;
+	int timeSinceStart = glutGet(GLUT_ELAPSED_TIME);
+	glUniform1f(timeUniform, (float)timeSinceStart / 1000.0f);
 
 	Matrix4 eyeMatrix;
 	eyeMatrix = eyeMatrix.makeTranslation(Cvec3(-0.5, 4.0, 10.0));
@@ -210,11 +212,11 @@ void display(void) {
 	glUniformMatrix4fv(projectionMatrixUniformLocation, 1, false, glmatrixProjection);
 
 	
-	object1.transform.rotation = Quat::makeYRotation(-15.0);
+	object1.transform.rotation = Quat::makeYRotation(0.001 * timeSinceStart * 40.0f);
 	object1.transform.position = Cvec3(0.0, 0.0, 0.0);
 	object1.Draw(inv(object1EyeMatrix), positionAttribute, texCoordAttribute, normalAttribute, binormalAttribute, tangentAttribute, modelviewMatrixUniformLocation, normalMatrixUniformLocation);
 
-	object2.transform.rotation = Quat::makeYRotation(15.0);
+	object2.transform.rotation = Quat::makeYRotation(0.001 * timeSinceStart * -40.0f);
 	object2.transform.position = Cvec3(1.0, 0.0, 0.0);
 	object2.Draw(inv(object2EyeMatrix), positionAttribute, texCoordAttribute, normalAttribute, binormalAttribute, tangentAttribute, modelviewMatrixUniformLocation, normalMatrixUniformLocation);
 
