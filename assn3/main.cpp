@@ -123,28 +123,28 @@ void calculateFaceTangent(const Cvec3f &v1, const Cvec3f &v2, const Cvec3f &v3, 
 
 
 
-void keyboard(unsigned char key, int x, int y) {
-	switch (key) {
-	case 'a':
-		textureOffset += 0.02;
-		break;
-	case 'd':
-		textureOffset -= 0.02;
-		break;
-	}
-}
-
-void mouse(int button, int state, int x, int y) {
-	float newPositionX = (float)x / 250.0f - 1.0f;
-	float newPositionY = (1.0 - (float)y / 250.0);
-	glUniform2f(positionUniform, newPositionX, newPositionY);
-}
-
-void mouseMove(int x, int y) {
-	float newPositionX = (float)x / 250.0f - 1.0f;
-	float newPositionY = (1.0 - (float)y / 250.0);
-	glUniform2f(positionUniform, newPositionX, newPositionY);
-}
+//void keyboard(unsigned char key, int x, int y) {
+//	switch (key) {
+//	case 'a':
+//		textureOffset += 0.02;
+//		break;
+//	case 'd':
+//		textureOffset -= 0.02;
+//		break;
+//	}
+//}
+//
+//void mouse(int button, int state, int x, int y) {
+//	float newPositionX = (float)x / 250.0f - 1.0f;
+//	float newPositionY = (1.0 - (float)y / 250.0);
+//	glUniform2f(positionUniform, newPositionX, newPositionY);
+//}
+//
+//void mouseMove(int x, int y) {
+//	float newPositionX = (float)x / 250.0f - 1.0f;
+//	float newPositionY = (1.0 - (float)y / 250.0);
+//	glUniform2f(positionUniform, newPositionX, newPositionY);
+//}
 
 void display(void) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -154,54 +154,10 @@ void display(void) {
 	int timeSinceStart = glutGet(GLUT_ELAPSED_TIME);
 	glUniform1f(timeUniform, (float)timeSinceStart / 1000.0f);
 
+	// Eye matrix
 	Matrix4 eyeMatrix;
 	eyeMatrix = eyeMatrix.makeTranslation(Cvec3(-0.5, 4.0, 10.0));
 	eyeMatrix = eyeMatrix * eyeMatrix.makeXRotation(5.0);
-
-	Matrix4 object1EyeMatrix;
-	object1EyeMatrix = object1EyeMatrix.makeTranslation(Cvec3(5.0, 4.0, 10.0));
-	object1EyeMatrix = object1EyeMatrix * object1EyeMatrix.makeXRotation(5.0);
-
-	Matrix4 object2EyeMatrix;
-	object2EyeMatrix = object2EyeMatrix.makeTranslation(Cvec3(-5.0, 4.0, 10.0));
-	object2EyeMatrix = object2EyeMatrix * object2EyeMatrix.makeXRotation(5.0);
-
-	//Matrix4 modelViewMatrix = inv(eyeMatrix) * objectMatrix;
-		
-	//GLfloat glmatrix[16];
-	//modelViewMatrix.writeToColumnMajorMatrix(glmatrix);
-	//glUniformMatrix4fv(modelviewMatrixUniformLocation, 1, false, glmatrix);
-
-	////////
-	Cvec4 lightPosition0 = Cvec4(0.0, 5.0, 1.0, 0.0);
-	lightPosition0 = inv(eyeMatrix) * lightPosition0;
-	////////
-	
-	//glUniform3f(light1PositionUniformLocation, 5.0, 1.0, 0.0);
-	glUniform3f(light1PositionUniformLocation, lightPosition0[0], lightPosition0[1], lightPosition0[2]);
-	glUniform3f(light1ColorUniformLocation, 1.0, 0.0, 0.0);
-	glUniform3f(light1SpecularColorUniformLocation, 1.0, 1.0, 1.0);
-
-	////////
-	Cvec4 lightPosition1 = Cvec4(5.0, 15.0, 3.0, 1.0);
-	lightPosition1 = inv(eyeMatrix) * lightPosition1;
-	////////
-
-	//glUniform3f(light2PositionUniformLocation, 5.0, 1.0, 0.0);
-	glUniform3f(light2PositionUniformLocation, lightPosition1[0], lightPosition1[1], lightPosition1[2]);
-	glUniform3f(light2ColorUniformLocation, 0.0, 1.0, 0.0);
-	glUniform3f(light2SpecularColorUniformLocation, 1.0, 1.0, 1.0);
-
-	////////
-	Cvec4 lightPosition2 = Cvec4(-5.0, 13.0, -1.0, 1.0);
-	lightPosition2 = inv(eyeMatrix) * lightPosition2;
-	////////
-
-	//glUniform3f(light3PositionUniformLocation, 5.0, 1.0, 0.0);
-	glUniform3f(light3PositionUniformLocation, lightPosition2[0], lightPosition2[1], lightPosition2[2]);
-	glUniform3f(light3ColorUniformLocation, 0.0, 0.0, 1.0);
-	glUniform3f(light3SpecularColorUniformLocation, 1.0, 1.0, 1.0);
-
 
 	// Projection Matrix
 	Matrix4 projectionMatrix;
@@ -211,15 +167,14 @@ void display(void) {
 	projectionMatrix.writeToColumnMajorMatrix(glmatrixProjection);
 	glUniformMatrix4fv(projectionMatrixUniformLocation, 1, false, glmatrixProjection);
 
-	
+	// Draw the monks
 	object1.transform.rotation = Quat::makeYRotation(0.001 * timeSinceStart * 40.0f);
-	object1.transform.position = Cvec3(0.0, 0.0, 0.0);
-	object1.Draw(inv(object1EyeMatrix), positionAttribute, texCoordAttribute, normalAttribute, binormalAttribute, tangentAttribute, modelviewMatrixUniformLocation, normalMatrixUniformLocation);
+	object1.transform.position = Cvec3(-5.0, 0.0, 0.0);
+	object1.Draw(inv(eyeMatrix), positionAttribute, texCoordAttribute, normalAttribute, binormalAttribute, tangentAttribute, modelviewMatrixUniformLocation, normalMatrixUniformLocation);
 
 	object2.transform.rotation = Quat::makeYRotation(0.001 * timeSinceStart * -40.0f);
-	object2.transform.position = Cvec3(1.0, 0.0, 0.0);
-	object2.Draw(inv(object2EyeMatrix), positionAttribute, texCoordAttribute, normalAttribute, binormalAttribute, tangentAttribute, modelviewMatrixUniformLocation, normalMatrixUniformLocation);
-
+	object2.transform.position = Cvec3(5.0, 0.0, 0.0);
+	object2.Draw(inv(eyeMatrix), positionAttribute, texCoordAttribute, normalAttribute, binormalAttribute, tangentAttribute, modelviewMatrixUniformLocation, normalMatrixUniformLocation);
 
 	glutSwapBuffers();
 }
@@ -347,20 +302,20 @@ void init() {
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned short) * model2MeshIndices.size(), model2MeshIndices.data(), GL_STATIC_DRAW);
 
 	// Lighting
-	light1PositionUniformLocation = glGetUniformLocation(program, "lights[0].lightPosition");
-	light1DirectionUniformLocation = glGetUniformLocation(program, "lights[0].lightDirection"); //?
-	light1ColorUniformLocation = glGetUniformLocation(program, "lights[0].lightColor");
-	light1SpecularColorUniformLocation = glGetUniformLocation(program, "lights[0].specularLightColor");
+	//light1PositionUniformLocation = glGetUniformLocation(program, "lights[0].lightPosition");
+	//light1DirectionUniformLocation = glGetUniformLocation(program, "lights[0].lightDirection"); 
+	//light1ColorUniformLocation = glGetUniformLocation(program, "lights[0].lightColor");
+	//light1SpecularColorUniformLocation = glGetUniformLocation(program, "lights[0].specularLightColor");
 
-	light2PositionUniformLocation = glGetUniformLocation(program, "lights[1].lightPosition");
-	light2DirectionUniformLocation = glGetUniformLocation(program, "lights[1].lightDirection"); //?
-	light2ColorUniformLocation = glGetUniformLocation(program, "lights[1].lightColor");
-	light2SpecularColorUniformLocation = glGetUniformLocation(program, "lights[1].specularLightColor");
+	//light2PositionUniformLocation = glGetUniformLocation(program, "lights[1].lightPosition");
+	//light2DirectionUniformLocation = glGetUniformLocation(program, "lights[1].lightDirection"); 
+	//light2ColorUniformLocation = glGetUniformLocation(program, "lights[1].lightColor");
+	//light2SpecularColorUniformLocation = glGetUniformLocation(program, "lights[1].specularLightColor");
 
-	light3PositionUniformLocation = glGetUniformLocation(program, "lights[2].lightPosition");
-	light3DirectionUniformLocation = glGetUniformLocation(program, "lights[2].lightDirection"); //?
-	light3ColorUniformLocation = glGetUniformLocation(program, "lights[2].lightColor");
-	light3SpecularColorUniformLocation = glGetUniformLocation(program, "lights[2].specularLightColor");
+	//light3PositionUniformLocation = glGetUniformLocation(program, "lights[2].lightPosition");
+	//light3DirectionUniformLocation = glGetUniformLocation(program, "lights[2].lightDirection"); 
+	//light3ColorUniformLocation = glGetUniformLocation(program, "lights[2].lightColor");
+	//light3SpecularColorUniformLocation = glGetUniformLocation(program, "lights[2].specularLightColor");
 
 }
 

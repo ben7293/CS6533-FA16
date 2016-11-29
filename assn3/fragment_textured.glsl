@@ -12,7 +12,7 @@ struct Light {
 	vec3 specularLightColor;
 };
 
-uniform Light lights[3];
+//uniform Light lights[3];
 
 float attenuate(float dist, float a, float b) {
 	return 1.0 / (1.0 + a*dist + b*dist*dist);
@@ -20,8 +20,23 @@ float attenuate(float dist, float a, float b) {
 
 void main() {
 	vec3 diffuseColor = vec3(1.0, 1.0, 1.0);
-	vec3 specularColor = vec3(1.0, 0.5, 0.0);
-	vec3 normalColor = vec3(0.8, 0.8, 0.5);
+	vec3 specularColor = vec3(0.8, 0.5, 0.0);
+	vec3 normalColor = vec3(0.3, 0.3, 0.5);
+
+	Light lights[3];
+
+	lights[0].lightPosition = vec3(-2.0, 0.0, 0.0);
+	lights[0].lightColor = vec3(1.0, 0.0, 0.0);
+	lights[0].specularLightColor = vec3(0.9, 0.7, 0.2);
+
+	lights[1].lightPosition = vec3(2.0, 0.0, 0.0);
+	lights[1].lightColor = vec3(0.0, 1.0, 0.0);
+	lights[1].specularLightColor = vec3(0.9, 0.7, 0.2);
+
+	lights[2].lightPosition = vec3(0.0, 0.0, 0.0);
+	lights[2].lightColor = vec3(0.0, 0.0, 1.0);
+	lights[2].specularLightColor = vec3(0.9, 0.7, 0.2);
+
 
 	vec3 textureNormal = normalize((texture2D(normalTexture, varyingTexCoord).xyz * 2.0) -1.0);
 	textureNormal = normalize(varyingTBNMatrix * textureNormal);
