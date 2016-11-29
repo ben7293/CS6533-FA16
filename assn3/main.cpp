@@ -301,18 +301,18 @@ void init() {
 
 	// Monk 2
 	object2.diffuseTexture = loadGLTexture("model/Monk_D.tga");
-	glUniform1i(diffuseTextureUniformLocation, 0);
-	glActiveTexture(GL_TEXTURE0);
+	glUniform1i(diffuseTextureUniformLocation, 3);
+	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_2D, object2.diffuseTexture);
 
 	object2.specularTexture = loadGLTexture("model/Monk_S.tga");
-	glUniform1i(specularTextureUniformLocation, 1);
-	glActiveTexture(GL_TEXTURE1);
+	glUniform1i(specularTextureUniformLocation, 4);
+	glActiveTexture(GL_TEXTURE4);
 	glBindTexture(GL_TEXTURE_2D, object2.specularTexture);
 
 	object2.normalTexture = loadGLTexture("model/Monk_N.tga");
-	glUniform1i(normalTextureUniformLocation, 2);
-	glActiveTexture(GL_TEXTURE2);
+	glUniform1i(normalTextureUniformLocation, 5);
+	glActiveTexture(GL_TEXTURE5);
 	glBindTexture(GL_TEXTURE_2D, object2.normalTexture);
 
 	// Monk 2
@@ -336,11 +336,11 @@ void init() {
 	object2.geometry.indexBO = model2MeshIndices.size();
 
 	// Monk 2
-	glGenBuffers(2, &object2.geometry.vertexBO);
+	glGenBuffers(1, &object2.geometry.vertexBO);
 	glBindBuffer(GL_ARRAY_BUFFER, object2.geometry.vertexBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(VertexPNTBTG) * model2MeshVertices.size(), model2MeshVertices.data(), GL_STATIC_DRAW);
 
-	glGenBuffers(2, &object2.geometry.indexBO);
+	glGenBuffers(1, &object2.geometry.indexBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, object2.geometry.indexBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned short) * model2MeshIndices.size(), model2MeshIndices.data(), GL_STATIC_DRAW);
 

@@ -1,4 +1,4 @@
-﻿Build started 11/28/2016 6:22:23 PM.
+﻿Build started 11/28/2016 8:08:01 PM.
      1>Project "C:\Users\ben72\OneDrive\NYU\Fall 16\CS-GY 6533\CS6533-FA16\assn3\TemplateProject.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
@@ -24,4 +24,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:02.00
+Time Elapsed 00:00:01.91
