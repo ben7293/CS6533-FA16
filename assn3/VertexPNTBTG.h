@@ -78,19 +78,13 @@ struct Entity {
 	void Draw(Matrix4 &eyeInverse, GLuint positionAttribute, GLuint texCoordAttribute, GLuint normalAttribute, GLuint binormalAttribute, GLuint tangentAttribute, GLuint modelviewMatrixUniformLocation, GLuint normalMatrixUniformLocation) {
 
 		// create modelview matrix
-		Matrix4 modelViewMatrix;
-		if (parent == nullptr) {
-			modelViewMatrix = eyeInverse * transform.createMatrix();
-		}
-		else {
-			Matrix4 modelViewMatrix = eyeInverse * parent->transform.createMatrix();
-		}
+		Matrix4 modelViewMatrix = eyeInverse * transform.createMatrix();
 		GLfloat glmatrix[16];
 		modelViewMatrix.writeToColumnMajorMatrix(glmatrix);
 		
 		// create normal matrix
-		Matrix4 normalMatrix;
-		normalMatrix = transpose(inv(modelViewMatrix));
+		//Matrix4 normalMatrix = transpose(inv(modelViewMatrix));
+		Matrix4 normalMatrix = transpose(modelViewMatrix);
 		GLfloat glmatrixNormal[16];
 		normalMatrix.writeToColumnMajorMatrix(glmatrixNormal);
 

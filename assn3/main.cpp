@@ -101,8 +101,7 @@ void loadObjFile(const std::string &fileName, std::vector<VertexPNTBTG> &outVert
 	}
 }
 
-void calculateFaceTangent(const Cvec3f &v1, const Cvec3f &v2, const Cvec3f &v3, const Cvec2f &texCoord1, const Cvec2f &texCoord2,
-	const Cvec2f &texCoord3, Cvec3f &tangent, Cvec3f &binormal) {
+void calculateFaceTangent(const Cvec3f &v1, const Cvec3f &v2, const Cvec3f &v3, const Cvec2f &texCoord1, const Cvec2f &texCoord2, const Cvec2f &texCoord3, Cvec3f &tangent, Cvec3f &binormal) {
 	Cvec3f side0 = v1 - v2;
 	Cvec3f side1 = v3 - v1;
 	Cvec3f normal = cross(side1, side0);
@@ -204,9 +203,9 @@ void init() {
 	modelviewMatrixUniformLocation = glGetUniformLocation(program, "modelViewMatrix");
 	projectionMatrixUniformLocation = glGetUniformLocation(program, "projectionMatrix");
 	normalMatrixUniformLocation = glGetUniformLocation(program, "normalMatrix");
-	normalTextureUniformLocation = glGetUniformLocation(program, "normalTexture");
 	diffuseTextureUniformLocation = glGetUniformLocation(program, "diffuseTexture");
 	specularTextureUniformLocation = glGetUniformLocation(program, "specularTexture");
+	normalTextureUniformLocation = glGetUniformLocation(program, "normalTexture");
 
 	loadObjFile("model/Monk_Giveaway_Fixed.obj", model1MeshVertices, model1MeshIndices);
 	loadObjFile("model/Monk_Giveaway_Fixed.obj", model2MeshVertices, model2MeshIndices);
@@ -302,20 +301,36 @@ void init() {
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned short) * model2MeshIndices.size(), model2MeshIndices.data(), GL_STATIC_DRAW);
 
 	// Lighting
-	//light1PositionUniformLocation = glGetUniformLocation(program, "lights[0].lightPosition");
-	//light1DirectionUniformLocation = glGetUniformLocation(program, "lights[0].lightDirection"); 
-	//light1ColorUniformLocation = glGetUniformLocation(program, "lights[0].lightColor");
-	//light1SpecularColorUniformLocation = glGetUniformLocation(program, "lights[0].specularLightColor");
+	light1PositionUniformLocation = glGetUniformLocation(program, "lights[0].lightPosition");
+	light1DirectionUniformLocation = glGetUniformLocation(program, "lights[0].lightDirection"); 
+	light1ColorUniformLocation = glGetUniformLocation(program, "lights[0].lightColor");
+	light1SpecularColorUniformLocation = glGetUniformLocation(program, "lights[0].specularLightColor");
 
-	//light2PositionUniformLocation = glGetUniformLocation(program, "lights[1].lightPosition");
-	//light2DirectionUniformLocation = glGetUniformLocation(program, "lights[1].lightDirection"); 
-	//light2ColorUniformLocation = glGetUniformLocation(program, "lights[1].lightColor");
-	//light2SpecularColorUniformLocation = glGetUniformLocation(program, "lights[1].specularLightColor");
+	light2PositionUniformLocation = glGetUniformLocation(program, "lights[1].lightPosition");
+	light2DirectionUniformLocation = glGetUniformLocation(program, "lights[1].lightDirection"); 
+	light2ColorUniformLocation = glGetUniformLocation(program, "lights[1].lightColor");
+	light2SpecularColorUniformLocation = glGetUniformLocation(program, "lights[1].specularLightColor");
 
-	//light3PositionUniformLocation = glGetUniformLocation(program, "lights[2].lightPosition");
-	//light3DirectionUniformLocation = glGetUniformLocation(program, "lights[2].lightDirection"); 
-	//light3ColorUniformLocation = glGetUniformLocation(program, "lights[2].lightColor");
-	//light3SpecularColorUniformLocation = glGetUniformLocation(program, "lights[2].specularLightColor");
+	light3PositionUniformLocation = glGetUniformLocation(program, "lights[2].lightPosition");
+	light3DirectionUniformLocation = glGetUniformLocation(program, "lights[2].lightDirection"); 
+	light3ColorUniformLocation = glGetUniformLocation(program, "lights[2].lightColor");
+	light3SpecularColorUniformLocation = glGetUniformLocation(program, "lights[2].specularLightColor");
+
+	glUniform3f(light1PositionUniformLocation, 0.0, 2.0, 0.0);
+	glUniform3f(light1DirectionUniformLocation, 0.0, 2.0, 0.0);
+	glUniform3f(light1ColorUniformLocation, 1.0, 1.0, 1.0);
+	glUniform3f(light1SpecularColorUniformLocation, 1.0, 1.0, 1.0);
+
+	glUniform3f(light2PositionUniformLocation, 0.0, 2.0, 0.0);
+	glUniform3f(light2DirectionUniformLocation, 0.0, 2.0, 0.0);
+	glUniform3f(light2ColorUniformLocation, 1.0, 1.0, 1.0);
+	glUniform3f(light2SpecularColorUniformLocation, 1.0, 1.0, 1.0);
+
+	glUniform3f(light3PositionUniformLocation, 0.0, 2.0, 0.0);
+	glUniform3f(light3DirectionUniformLocation, 0.0, 2.0, 0.0);
+	glUniform3f(light3ColorUniformLocation, 1.0, 1.0, 1.0);
+	glUniform3f(light3SpecularColorUniformLocation, 1.0, 1.0, 1.0);
+
 
 }
 

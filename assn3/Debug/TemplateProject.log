@@ -1,4 +1,4 @@
-﻿Build started 11/28/2016 9:07:49 PM.
+﻿Build started 11/29/2016 4:30:21 PM.
      1>Project "C:\Users\ben72\OneDrive\NYU\Fall 16\CS-GY 6533\CS6533-FA16\assn3\TemplateProject.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
@@ -6,8 +6,8 @@
      1>c:\users\ben72\onedrive\nyu\fall 16\cs-gy 6533\cs6533-fa16\assn3\main.cpp(79): warning C4018: '<' : signed/unsigned mismatch
      1>c:\users\ben72\onedrive\nyu\fall 16\cs-gy 6533\cs6533-fa16\assn3\main.cpp(80): warning C4018: '<' : signed/unsigned mismatch
      1>c:\users\ben72\onedrive\nyu\fall 16\cs-gy 6533\cs6533-fa16\assn3\main.cpp(92): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
-     1>c:\users\ben72\onedrive\nyu\fall 16\cs-gy 6533\cs6533-fa16\assn3\main.cpp(231): warning C4018: '<' : signed/unsigned mismatch
-     1>c:\users\ben72\onedrive\nyu\fall 16\cs-gy 6533\cs6533-fa16\assn3\main.cpp(276): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\ben72\onedrive\nyu\fall 16\cs-gy 6533\cs6533-fa16\assn3\main.cpp(230): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\ben72\onedrive\nyu\fall 16\cs-gy 6533\cs6533-fa16\assn3\main.cpp(275): warning C4018: '<' : signed/unsigned mismatch
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\ben72\OneDrive\NYU\Fall 16\CS-GY 6533\CS6533-FA16\assn3\Debug\TemplateProject.exe" /INCREMENTAL /NOLOGO freeglut.lib glew32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\ben72\OneDrive\NYU\Fall 16\CS-GY 6533\CS6533-FA16\assn3\Debug\TemplateProject.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\ben72\OneDrive\NYU\Fall 16\CS-GY 6533\CS6533-FA16\assn3\Debug\TemplateProject.lib" /MACHINE:X86 Debug\glsupport.obj
          Debug\main.obj
@@ -16,4 +16,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:02.38
+Time Elapsed 00:00:02.96
