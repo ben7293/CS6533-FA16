@@ -148,7 +148,7 @@ void calculateFaceTangent(const Cvec3f &v1, const Cvec3f &v2, const Cvec3f &v3, 
 void display(void) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
-	//glUseProgram(program);
+	glUseProgram(program);
 
 	int timeSinceStart = glutGet(GLUT_ELAPSED_TIME);
 	glUniform1f(timeUniform, (float)timeSinceStart / 1000.0f);
@@ -167,10 +167,28 @@ void display(void) {
 	glUniformMatrix4fv(projectionMatrixUniformLocation, 1, false, glmatrixProjection);
 
 	// Draw the monks
+	glUniform1i(diffuseTextureUniformLocation, 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, object1.diffuseTexture);
+	glUniform1i(specularTextureUniformLocation, 1);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, object1.specularTexture);
+	glUniform1i(normalTextureUniformLocation, 2);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, object1.normalTexture);
+	glUniform1i(diffuseTextureUniformLocation, 3);
+	glActiveTexture(GL_TEXTURE3);
 	object1.transform.rotation = Quat::makeYRotation(0.001 * timeSinceStart * 40.0f);
 	object1.transform.position = Cvec3(-5.0, 0.0, 0.0);
 	object1.Draw(inv(eyeMatrix), positionAttribute, texCoordAttribute, normalAttribute, binormalAttribute, tangentAttribute, modelviewMatrixUniformLocation, normalMatrixUniformLocation);
 
+	glBindTexture(GL_TEXTURE_2D, object2.diffuseTexture);
+	glUniform1i(specularTextureUniformLocation, 4);
+	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, object2.specularTexture);
+	glUniform1i(normalTextureUniformLocation, 5);
+	glActiveTexture(GL_TEXTURE5);
+	glBindTexture(GL_TEXTURE_2D, object2.normalTexture);
 	object2.transform.rotation = Quat::makeYRotation(0.001 * timeSinceStart * -40.0f);
 	object2.transform.position = Cvec3(5.0, 0.0, 0.0);
 	object2.Draw(inv(eyeMatrix), positionAttribute, texCoordAttribute, normalAttribute, binormalAttribute, tangentAttribute, modelviewMatrixUniformLocation, normalMatrixUniformLocation);
@@ -183,14 +201,13 @@ void init() {
 	program = glCreateProgram();
 
 	glClearDepth(0.0f);
-	glEnable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_GREATER);
 	glReadBuffer(GL_BACK);
 	
 	readAndCompileShader(program, "vertex_textured.glsl", "fragment_textured.glsl");
-	glUseProgram(program);
 
 	positionAttribute = glGetAttribLocation(program, "position");
 	texCoordAttribute = glGetAttribLocation(program, "texCoord");
@@ -212,19 +229,9 @@ void init() {
 
 	// Monk 1
 	object1.diffuseTexture = loadGLTexture("model/Monk_D.tga");
-	glUniform1i(diffuseTextureUniformLocation, 0);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, object1.diffuseTexture);
-
 	object1.specularTexture = loadGLTexture("model/Monk_S.tga");
-	glUniform1i(specularTextureUniformLocation, 1);
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, object1.specularTexture);
-
 	object1.normalTexture = loadGLTexture("model/Monk_N.tga");
-	glUniform1i(normalTextureUniformLocation, 2);
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, object1.normalTexture);
+
 
 	// Monk 1
 	for (int i = 0; i < model1MeshVertices.size(); i += 3) {
@@ -257,19 +264,8 @@ void init() {
 
 	// Monk 2
 	object2.diffuseTexture = loadGLTexture("model/Monk_D.tga");
-	glUniform1i(diffuseTextureUniformLocation, 3);
-	glActiveTexture(GL_TEXTURE3);
-	glBindTexture(GL_TEXTURE_2D, object2.diffuseTexture);
-
 	object2.specularTexture = loadGLTexture("model/Monk_S.tga");
-	glUniform1i(specularTextureUniformLocation, 4);
-	glActiveTexture(GL_TEXTURE4);
-	glBindTexture(GL_TEXTURE_2D, object2.specularTexture);
-
 	object2.normalTexture = loadGLTexture("model/Monk_N.tga");
-	glUniform1i(normalTextureUniformLocation, 5);
-	glActiveTexture(GL_TEXTURE5);
-	glBindTexture(GL_TEXTURE_2D, object2.normalTexture);
 
 	// Monk 2
 	for (int i = 0; i < model2MeshVertices.size(); i += 3) {

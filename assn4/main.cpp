@@ -72,8 +72,6 @@ GLuint frameBufferB;
 GLuint frameBufferBTexture;
 GLuint frameBufferC;
 GLuint frameBufferCTexture;
-GLuint frameBufferD;
-GLuint frameBufferDTexture;
 
 GLuint depthBufferA;
 GLuint depthBufferATexture;
@@ -81,8 +79,6 @@ GLuint depthBufferB;
 GLuint depthBufferBTexture;
 GLuint depthBufferC;
 GLuint depthBufferCTexture;
-GLuint depthBufferD;
-GLuint depthBufferDTexture;
 
 GLuint greyscalePositionAttribute;
 GLuint greyscaleTexCoordAttribute;
@@ -102,6 +98,7 @@ GLuint horizontalBlurFrameBufferUniformLocation;
 GLuint horizontalBlurPositionBufferUniformLocation;
 GLuint horizontalBlurUVBufferUniformLocation;
 
+
 GLfloat screenTrianglePositions[] = {
 	1.0f, 1.0f,
 	1.0f, -1.0f,
@@ -119,6 +116,7 @@ GLfloat screenTriangleUVs[] = {
 	0.0f, 1.0f,
 	1.0f, 1.0f
 };
+
 
 Entity object1;
 Entity object2;
@@ -161,7 +159,8 @@ void loadObjFile(const std::string &fileName, std::vector<VertexPNTBTG> &outVert
 	}
 }
 
-void calculateFaceTangent(const Cvec3f &v1, const Cvec3f &v2, const Cvec3f &v3, const Cvec2f &texCoord1, const Cvec2f &texCoord2, const Cvec2f &texCoord3, Cvec3f &tangent, Cvec3f &binormal) {
+void calculateFaceTangent(const Cvec3f &v1, const Cvec3f &v2, const Cvec3f &v3, const Cvec2f &texCoord1, const Cvec2f &texCoord2,
+	const Cvec2f &texCoord3, Cvec3f &tangent, Cvec3f &binormal) {
 	Cvec3f side0 = v1 - v2;
 	Cvec3f side1 = v3 - v1;
 	Cvec3f normal = cross(side1, side0);
@@ -207,15 +206,14 @@ void calculateFaceTangent(const Cvec3f &v1, const Cvec3f &v2, const Cvec3f &v3, 
 
 void display(void) {
     
-	// Bind to Framebuffer A for 3D scene rendering
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBufferA);
 	glViewport(0, 0, 500, 500);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+	glUseProgram(program);
 
 	int timeSinceStart = glutGet(GLUT_ELAPSED_TIME);
 	glUniform1f(timeUniform, (float)timeSinceStart / 1000.0f);
-
-	glUseProgram(program);
 
 	// Eye matrix
 	Matrix4 eyeMatrix;
@@ -231,10 +229,29 @@ void display(void) {
 	glUniformMatrix4fv(projectionMatrixUniformLocation, 1, false, glmatrixProjection);
 
 	// Draw the monks
+	glUniform1i(diffuseTextureUniformLocation, 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, object1.diffuseTexture);
+	glUniform1i(specularTextureUniformLocation, 1);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, object1.specularTexture);
+	glUniform1i(normalTextureUniformLocation, 2);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, object1.normalTexture);
 	object1.transform.rotation = Quat::makeYRotation(0.001 * timeSinceStart * 40.0f);
 	object1.transform.position = Cvec3(-5.0, 0.0, 0.0);
 	object1.Draw(inv(eyeMatrix), positionAttribute, texCoordAttribute, normalAttribute, binormalAttribute, tangentAttribute, modelviewMatrixUniformLocation, normalMatrixUniformLocation);
 
+
+	glUniform1i(diffuseTextureUniformLocation, 3);
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, object2.diffuseTexture);
+	glUniform1i(specularTextureUniformLocation, 4);
+	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, object2.specularTexture);
+	glUniform1i(normalTextureUniformLocation, 5);
+	glActiveTexture(GL_TEXTURE5);
+	glBindTexture(GL_TEXTURE_2D, object2.normalTexture);
 	object2.transform.rotation = Quat::makeYRotation(0.001 * timeSinceStart * -40.0f);
 	object2.transform.position = Cvec3(5.0, 0.0, 0.0);
 	object2.Draw(inv(eyeMatrix), positionAttribute, texCoordAttribute, normalAttribute, binormalAttribute, tangentAttribute, modelviewMatrixUniformLocation, normalMatrixUniformLocation);
@@ -293,19 +310,16 @@ void display(void) {
 
 	glDisableVertexAttribArray(verticalBlurPositionAttribute);
 	glDisableVertexAttribArray(verticalBlurTexCoordAttribute);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glViewport(0, 0, 500, 500);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Blur - Horizontal
-	glBindFramebuffer(GL_FRAMEBUFFER, frameBufferD);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0, 0, 500, 500);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glUseProgram(horizontalBlurProgram);
 	glUniform1i(horizontalBlurFrameBufferUniformLocation, 0);
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, frameBufferBTexture);
+	glBindTexture(GL_TEXTURE_2D, frameBufferCTexture);
 
 	glBindBuffer(GL_ARRAY_BUFFER, horizontalBlurPositionBufferUniformLocation);
 	glVertexAttribPointer(horizontalBlurPositionAttribute, 2, GL_FLOAT, GL_FALSE, 0, 0);
@@ -324,15 +338,69 @@ void display(void) {
 }
 
 void init() {
+
 	glClearDepth(0.0f);
-	glEnable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_GREATER);
 	glReadBuffer(GL_BACK);
-
+	
 	program = glCreateProgram();
 	readAndCompileShader(program, "vertex_textured.glsl", "fragment_textured.glsl");
+	
+	//glUseProgram(program);
+
+
+	// Post processing
+	// Greyscale
+	greyscaleProgram = glCreateProgram();
+	readAndCompileShader(greyscaleProgram, "vertex_greyscale.glsl", "fragment_greyscale.glsl");
+
+	greyscalePositionAttribute = glGetAttribLocation(greyscaleProgram, "position");
+	greyscaleTexCoordAttribute = glGetAttribLocation(greyscaleProgram, "texCoordVar");
+	greyscaleFrameBufferUniformLocation = glGetUniformLocation(greyscaleProgram, "screenFrameBuffer");
+
+	glGenBuffers(1, &greyscalePositionBufferUniformLocation);
+	glBindBuffer(GL_ARRAY_BUFFER, greyscalePositionBufferUniformLocation);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(screenTrianglePositions) * sizeof(GLfloat), screenTrianglePositions, GL_STATIC_DRAW);
+
+	glGenBuffers(1, &greyscaleUVBufferUniformLocation);
+	glBindBuffer(GL_ARRAY_BUFFER, greyscaleUVBufferUniformLocation);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(screenTriangleUVs) * sizeof(GLfloat), screenTriangleUVs, GL_STATIC_DRAW);
+
+	// Vertical Blur
+	verticalBlurProgram = glCreateProgram();
+	readAndCompileShader(verticalBlurProgram, "vertex_verticalBlur.glsl", "fragment_verticalBlur.glsl");
+
+	verticalBlurPositionAttribute = glGetAttribLocation(verticalBlurProgram, "position");
+	verticalBlurTexCoordAttribute = glGetAttribLocation(verticalBlurProgram, "texCoord");
+	verticalBlurFrameBufferUniformLocation = glGetUniformLocation(verticalBlurProgram, "screenFrameBuffer");
+
+	glGenBuffers(1, &verticalBlurPositionBufferUniformLocation);
+	glBindBuffer(GL_ARRAY_BUFFER, verticalBlurPositionBufferUniformLocation);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(screenTrianglePositions) * sizeof(GLfloat), screenTrianglePositions, GL_STATIC_DRAW);
+
+	glGenBuffers(1, &verticalBlurUVBufferUniformLocation);
+	glBindBuffer(GL_ARRAY_BUFFER, verticalBlurUVBufferUniformLocation);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(screenTriangleUVs) * sizeof(GLfloat), screenTriangleUVs, GL_STATIC_DRAW);
+
+	// Horizontal Blur
+	horizontalBlurProgram = glCreateProgram();
+	readAndCompileShader(horizontalBlurProgram, "vertex_horizontalBlur.glsl", "fragment_horizontalBlur.glsl");
+
+	horizontalBlurPositionAttribute = glGetAttribLocation(horizontalBlurProgram, "position");
+	horizontalBlurTexCoordAttribute = glGetAttribLocation(horizontalBlurProgram, "texCoord");
+	horizontalBlurFrameBufferUniformLocation = glGetUniformLocation(horizontalBlurProgram, "screenFrameBuffer");
+
+	glGenBuffers(1, &horizontalBlurPositionBufferUniformLocation);
+	glBindBuffer(GL_ARRAY_BUFFER, horizontalBlurPositionBufferUniformLocation);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(screenTrianglePositions) * sizeof(GLfloat), screenTrianglePositions, GL_STATIC_DRAW);
+
+	glGenBuffers(1, &horizontalBlurUVBufferUniformLocation);
+	glBindBuffer(GL_ARRAY_BUFFER, horizontalBlurUVBufferUniformLocation);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(screenTriangleUVs) * sizeof(GLfloat), screenTriangleUVs, GL_STATIC_DRAW);
+
 
 	positionAttribute = glGetAttribLocation(program, "position");
 	texCoordAttribute = glGetAttribLocation(program, "texCoord");
@@ -345,35 +413,25 @@ void init() {
 	modelviewMatrixUniformLocation = glGetUniformLocation(program, "modelViewMatrix");
 	projectionMatrixUniformLocation = glGetUniformLocation(program, "projectionMatrix");
 	normalMatrixUniformLocation = glGetUniformLocation(program, "normalMatrix");
+	normalTextureUniformLocation = glGetUniformLocation(program, "normalTexture");
 	diffuseTextureUniformLocation = glGetUniformLocation(program, "diffuseTexture");
 	specularTextureUniformLocation = glGetUniformLocation(program, "specularTexture");
-	normalTextureUniformLocation = glGetUniformLocation(program, "normalTexture");
 
 	loadObjFile("model/Monk_Giveaway_Fixed.obj", model1MeshVertices, model1MeshIndices);
 	loadObjFile("model/Monk_Giveaway_Fixed.obj", model2MeshVertices, model2MeshIndices);
 
 	// Monk 1
 	object1.diffuseTexture = loadGLTexture("model/Monk_D.tga");
-	glUniform1i(diffuseTextureUniformLocation, 0);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, object1.diffuseTexture);
-
 	object1.specularTexture = loadGLTexture("model/Monk_S.tga");
-	glUniform1i(specularTextureUniformLocation, 1);
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, object1.specularTexture);
-
 	object1.normalTexture = loadGLTexture("model/Monk_N.tga");
-	glUniform1i(normalTextureUniformLocation, 2);
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, object1.normalTexture);
+
 
 	// Monk 1
 	for (int i = 0; i < model1MeshVertices.size(); i += 3) {
 		Cvec3f tangent;
 		Cvec3f binormal;
 		calculateFaceTangent(model1MeshVertices[i].p, model1MeshVertices[i + 1].p, model1MeshVertices[i + 2].p, model1MeshVertices[i].t, model1MeshVertices[i + 1].t, model1MeshVertices[i + 2].t, tangent, binormal);
-
+		
 		model1MeshVertices[i].tg = tangent;
 		model1MeshVertices[i + 1].tg = tangent;
 		model1MeshVertices[i + 2].tg = tangent;
@@ -399,26 +457,16 @@ void init() {
 
 	// Monk 2
 	object2.diffuseTexture = loadGLTexture("model/Monk_D.tga");
-	glUniform1i(diffuseTextureUniformLocation, 3);
-	glActiveTexture(GL_TEXTURE3);
-	glBindTexture(GL_TEXTURE_2D, object2.diffuseTexture);
-
 	object2.specularTexture = loadGLTexture("model/Monk_S.tga");
-	glUniform1i(specularTextureUniformLocation, 4);
-	glActiveTexture(GL_TEXTURE4);
-	glBindTexture(GL_TEXTURE_2D, object2.specularTexture);
-
 	object2.normalTexture = loadGLTexture("model/Monk_N.tga");
-	glUniform1i(normalTextureUniformLocation, 5);
-	glActiveTexture(GL_TEXTURE5);
-	glBindTexture(GL_TEXTURE_2D, object2.normalTexture);
+
 
 	// Monk 2
 	for (int i = 0; i < model2MeshVertices.size(); i += 3) {
 		Cvec3f tangent;
 		Cvec3f binormal;
-		calculateFaceTangent(model2MeshVertices[i].p, model2MeshVertices[i + 1].p, model2MeshVertices[i + 2].p, model2MeshVertices[i].t, model2MeshVertices[i + 1].t, model2MeshVertices[i + 2].t, tangent, binormal);
-
+		calculateFaceTangent(model2MeshVertices[i].p, model2MeshVertices[i + 1].p, model2MeshVertices[i + 2].p,	model2MeshVertices[i].t, model2MeshVertices[i + 1].t, model2MeshVertices[i + 2].t, tangent, binormal);
+		
 		model2MeshVertices[i].tg = tangent;
 		model2MeshVertices[i + 1].tg = tangent;
 		model2MeshVertices[i + 2].tg = tangent;
@@ -444,34 +492,20 @@ void init() {
 
 	// Lighting
 	light1PositionUniformLocation = glGetUniformLocation(program, "lights[0].lightPosition");
-	light1DirectionUniformLocation = glGetUniformLocation(program, "lights[0].lightDirection");
+	light1DirectionUniformLocation = glGetUniformLocation(program, "lights[0].lightDirection"); 
 	light1ColorUniformLocation = glGetUniformLocation(program, "lights[0].lightColor");
 	light1SpecularColorUniformLocation = glGetUniformLocation(program, "lights[0].specularLightColor");
 
 	light2PositionUniformLocation = glGetUniformLocation(program, "lights[1].lightPosition");
-	light2DirectionUniformLocation = glGetUniformLocation(program, "lights[1].lightDirection");
+	light2DirectionUniformLocation = glGetUniformLocation(program, "lights[1].lightDirection"); 
 	light2ColorUniformLocation = glGetUniformLocation(program, "lights[1].lightColor");
 	light2SpecularColorUniformLocation = glGetUniformLocation(program, "lights[1].specularLightColor");
 
 	light3PositionUniformLocation = glGetUniformLocation(program, "lights[2].lightPosition");
-	light3DirectionUniformLocation = glGetUniformLocation(program, "lights[2].lightDirection");
+	light3DirectionUniformLocation = glGetUniformLocation(program, "lights[2].lightDirection"); 
 	light3ColorUniformLocation = glGetUniformLocation(program, "lights[2].lightColor");
 	light3SpecularColorUniformLocation = glGetUniformLocation(program, "lights[2].specularLightColor");
 
-	glUniform3f(light1PositionUniformLocation, 0.0, 2.0, 0.0);
-	glUniform3f(light1DirectionUniformLocation, 0.0, 2.0, 0.0);
-	glUniform3f(light1ColorUniformLocation, 1.0, 1.0, 1.0);
-	glUniform3f(light1SpecularColorUniformLocation, 1.0, 1.0, 1.0);
-
-	glUniform3f(light2PositionUniformLocation, 0.0, 2.0, 0.0);
-	glUniform3f(light2DirectionUniformLocation, 0.0, 2.0, 0.0);
-	glUniform3f(light2ColorUniformLocation, 1.0, 1.0, 1.0);
-	glUniform3f(light2SpecularColorUniformLocation, 1.0, 1.0, 1.0);
-
-	glUniform3f(light3PositionUniformLocation, 0.0, 2.0, 0.0);
-	glUniform3f(light3DirectionUniformLocation, 0.0, 2.0, 0.0);
-	glUniform3f(light3ColorUniformLocation, 1.0, 1.0, 1.0);
-	glUniform3f(light3SpecularColorUniformLocation, 1.0, 1.0, 1.0);
 
 	// Framebuffer A
 	glGenFramebuffers(1, &frameBufferA);
@@ -550,84 +584,6 @@ void init() {
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthBufferCTexture, 0);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	// Framebuffer D
-	glGenFramebuffers(1, &frameBufferD);
-	glBindFramebuffer(GL_FRAMEBUFFER, frameBufferD);
-
-	glGenTextures(1, &frameBufferDTexture);
-	glBindTexture(GL_TEXTURE_2D, frameBufferDTexture);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 500, 500, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, frameBufferDTexture, 0);
-
-	glGenTextures(1, &depthBufferDTexture);
-	glBindTexture(GL_TEXTURE_2D, depthBufferDTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 500, 500, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, NULL);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 500, 500);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthBufferDTexture, 0);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);	
-	
-	// Post processing
-	// Greyscale
-	greyscaleProgram = glCreateProgram();
-	readAndCompileShader(greyscaleProgram, "vertex_greyscale.glsl", "fragment_greyscale.glsl");
-
-	greyscalePositionAttribute = glGetAttribLocation(greyscaleProgram, "position");
-	greyscaleTexCoordAttribute = glGetAttribLocation(greyscaleProgram, "texCoord");
-	greyscaleFrameBufferUniformLocation = glGetAttribLocation(greyscaleProgram, "screenFrameBuffer");
-
-	glGenBuffers(1, &greyscalePositionBufferUniformLocation);
-	glBindBuffer(GL_ARRAY_BUFFER, greyscalePositionBufferUniformLocation);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(screenTrianglePositions), screenTrianglePositions, GL_STATIC_DRAW);
-
-	glGenBuffers(1, &greyscaleUVBufferUniformLocation);
-	glBindBuffer(GL_ARRAY_BUFFER, greyscaleUVBufferUniformLocation);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(screenTriangleUVs), screenTriangleUVs, GL_STATIC_DRAW);
-
-	// Vertical Blur
-	verticalBlurProgram = glCreateProgram();
-	readAndCompileShader(verticalBlurProgram, "vertex_verticalBlur.glsl", "fragment_verticalBlur.glsl");
-
-	verticalBlurPositionAttribute = glGetAttribLocation(verticalBlurProgram, "position");
-	verticalBlurTexCoordAttribute = glGetAttribLocation(verticalBlurProgram, "texCoordVar");
-	verticalBlurFrameBufferUniformLocation = glGetAttribLocation(verticalBlurProgram, "screenFrameBuffer");
-
-	glGenBuffers(1, &verticalBlurPositionBufferUniformLocation);
-	glBindBuffer(GL_ARRAY_BUFFER, verticalBlurPositionBufferUniformLocation);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(screenTrianglePositions), screenTrianglePositions, GL_STATIC_DRAW);
-
-	glGenBuffers(1, &verticalBlurUVBufferUniformLocation);
-	glBindBuffer(GL_ARRAY_BUFFER, verticalBlurUVBufferUniformLocation);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(screenTriangleUVs), screenTriangleUVs, GL_STATIC_DRAW);
-
-	// Horizontal Blur
-	horizontalBlurProgram = glCreateProgram();
-	readAndCompileShader(horizontalBlurProgram, "vertex_horizontalBlur.glsl", "fragment_horizontalBlur.glsl");
-
-	horizontalBlurPositionAttribute = glGetAttribLocation(horizontalBlurProgram, "position");
-	horizontalBlurTexCoordAttribute = glGetAttribLocation(horizontalBlurProgram, "texCoordVar");
-	horizontalBlurFrameBufferUniformLocation = glGetAttribLocation(horizontalBlurProgram, "screenFrameBuffer");
-
-	glGenBuffers(1, &horizontalBlurPositionBufferUniformLocation);
-	glBindBuffer(GL_ARRAY_BUFFER, horizontalBlurPositionBufferUniformLocation);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(screenTrianglePositions), screenTrianglePositions, GL_STATIC_DRAW);
-
-	glGenBuffers(1, &horizontalBlurUVBufferUniformLocation);
-	glBindBuffer(GL_ARRAY_BUFFER, horizontalBlurUVBufferUniformLocation);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(screenTriangleUVs), screenTriangleUVs, GL_STATIC_DRAW);
-
-
-
 
 }
 
